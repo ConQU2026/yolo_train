@@ -3,8 +3,6 @@ import shutil
 import random
 import sys
 import logging
-import argparse
-
 
 #tree
 # - dataset
@@ -22,23 +20,21 @@ import argparse
 #     - valid
 #         - class1.txt
 
-logging.basicConfig(
-    #动态设置日志级别
-    level=logging.DEBUG, 
-    format='%(asctime)s - %(levelname)s - %(message)s' 
-)
+
+def setup_logging(level):
+    logger = logging.getLogger()
+    logger.setLevel(level)
+    return logger
 
 class SeperateValid:
 
-    def __init__(self, valid_ratio=0.2, seed=42, dataset_dir="dataset"):
+    def __init__(self, valid_ratio=0.2, seed=42, dataset_dir="dataset", logger=None):
         self.valid_ratio = valid_ratio
         self.seed = seed
 
         self.dataset_dir = os.path.join(self.get_self_dir(), dataset_dir)
+        self.logger = logger
 
-        self.logger = logging.getLogger()
-        self.logger.setLevel(logging.INFO)
-        
         #先对原始数据集进行验证
         if not self.valid_database(mode=False):
             raise RuntimeError("Original dataset validation failed. Please check the dataset integrity.")
@@ -182,6 +178,9 @@ class SeperateValid:
 
         target_valid_dir = os.path.join(self.dataset_dir,'images', 'valid')
         os.makedirs(target_valid_dir, exist_ok=True)
+
+    # def rename_file(self, file_path, new_name):
+    #     pass
         
     
     def start_seperate(self):
@@ -237,28 +236,12 @@ class SeperateValid:
 
 
 def main():
-    # 1. 使用 argparse 获取命令行参数
-    parser = argparse.ArgumentParser(description='将数据集划分为训练集和验证集。')
-    parser.add_argument(
-        '-l', '--log-level', 
-        type=str, 
-        default='INFO', 
-        choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
-        help='设置日志输出级别 (DEBUG, INFO, WARNING, ERROR, CRITICAL)'
-    )
-    args = parser.parse_args()
-    
-    # 将字符串日志级别转换为 logging 模块的常量
-    log_level = getattr(logging, args.log_level.upper(), logging.INFO)
-    
-    # 2. 动态配置 logging 基础设置
-    logging.basicConfig(
-        level=log_level,  # 动态设置基础级别
-        format='%(asctime)s - %(levelname)s - %(message)s'
-    )
-    
-    # 3. 将动态级别传递给 SeperateValid
-    seperater = SeperateValid(valid_ratio=0.2, seed=42, dataset_dir="dataset") 
+
+    # 1. 设置日志级别
+    logger = setup_logging(logging.INFO)
+
+    # 2. 将日志记录器传递给 SeperateValid
+    seperater = SeperateValid(valid_ratio=0.2, seed=42, dataset_dir="dataset", logger=logger)
     seperater.start_seperate()
 
     
