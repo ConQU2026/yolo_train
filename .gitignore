@@ -12,6 +12,10 @@ wheels/
 
 dataset*/
 
+models/
+
+runs/
+
 
 
 .python_version

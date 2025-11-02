@@ -2,6 +2,7 @@ import os
 import random
 import sys
 import logging
+from pathlib import Path
 
 
 def setup_logging(level=logging.INFO):
@@ -20,14 +21,13 @@ def setup_logging(level=logging.INFO):
 class SeperateValid:
 
     def __init__(self, valid_ratio=0.2, seed=42, dataset_dir="dataset", logger=None):
-        self.valid_ratio = valid_ratio
         self.seed = seed
-        self.logger = logger or setup_logging(logging.INFO)
-        
+        self.logger = logger
+        self.valid_ratio = valid_ratio
         # 1. 定义原始数据集目录
-        self.original_dataset_dir = os.path.join(self.get_self_dir(),'..', dataset_dir)
+        self.original_dataset_dir = os.path.join(Path(__file__).parent,'..', dataset_dir)
         
-        # 2. 验证原始数据集 (现在传入路径和模式)
+        # 2. 验证原始数据集
         if not self.valid_database(self.original_dataset_dir, mode=False):
             raise RuntimeError("Original dataset validation failed. Please check the dataset integrity.")
         
@@ -43,36 +43,34 @@ class SeperateValid:
         self.logger.info(f"Original dataset: {self.original_dataset_dir}")
         self.logger.info(f"New separated dataset will be created at: {self.seperated_dataset_dir}")
 
-    @staticmethod
-    def create_symlinks(src_path, dst_path, logger):
+
+    def create_symlinks(self, src_path, dst_path):
         """
         辅助函数：在 dst_path 创建一个指向 src_path 的符号链接。
         """
         try:
             # 检查源文件是否存在
             if not os.path.exists(src_path):
-                logger.warning(f"Warning: Source file not found, skipping link: {src_path}")
+                self.logger.warning(f"Warning: Source file not found, skipping link: {src_path}")
                 return False
 
             # 检查目标链接是否已存在
             if os.path.exists(dst_path) or os.path.lexists(dst_path):
-                logger.warning(f"Warning: Link already exists, skipping: {dst_path}")
+                self.logger.warning(f"Warning: Link already exists, skipping: {dst_path}")
                 return False
                 
             os.symlink(src_path, dst_path)
             return True
             
         except OSError as e:
-            logger.error(f"Error creating symlink: {e}")
+            self.logger.error(f"Error creating symlink: {e}")
             if sys.platform == "win32":
-                logger.error("Hint: On Windows, you might need to run this script as Administrator.")
+                self.logger.error("Hint: On Windows, you might need to run this script as Administrator.")
             return False
         except NotImplementedError:
-            logger.error("Error: Symlinks not supported on this platform/filesystem.")
+            self.logger.error("Error: Symlinks not supported on this platform/filesystem.")
             return False
 
-    def get_self_dir(self):
-        return os.path.dirname(os.path.abspath(__file__))
 
     #======================================================================================
     def valid_database(self, base_dir: str, mode: bool) -> bool:
@@ -111,7 +109,7 @@ class SeperateValid:
             image_name_jpg = os.path.splitext(label_name)[0] + '.jpg'
             image_name_png = os.path.splitext(label_name)[0] + '.png'
             if not os.path.exists(os.path.join(image_train_dir, image_name_jpg)) and \
-               not os.path.exists(os.path.join(image_train_dir, image_name_png)):
+                not os.path.exists(os.path.join(image_train_dir, image_name_png)):
                 self.logger.error(f"Image file not found for label (Train): {label_name}")
                 error_count += 1
         
@@ -132,7 +130,7 @@ class SeperateValid:
                 image_name_jpg = os.path.splitext(label_name)[0] + '.jpg'
                 image_name_png = os.path.splitext(label_name)[0] + '.png'
                 if not os.path.exists(os.path.join(image_valid_dir, image_name_jpg)) and \
-                   not os.path.exists(os.path.join(image_valid_dir, image_name_png)):
+                    not os.path.exists(os.path.join(image_valid_dir, image_name_png)):
                     self.logger.error(f"Image file not found for label (Valid): {label_name}")
                     error_count += 1
         
@@ -193,11 +191,11 @@ class SeperateValid:
             dst_lbl_path = os.path.join(dst_train_lbl_dir, lbl_name)
 
             # 链接图片
-            if self.create_symlinks(src_img_path, dst_img_path, self.logger):
+            if self.create_symlinks(src_img_path, dst_img_path):
                 total_train_links += 1
             # 链接标签 (如果存在)
             if os.path.exists(src_lbl_path):
-                self.create_symlinks(src_lbl_path, dst_lbl_path, self.logger)
+                self.create_symlinks(src_lbl_path, dst_lbl_path)
 
         # 6. 为 *新验证集* 创建符号链接
         self.logger.info("Creating symlinks for NEW valid set...")
@@ -212,12 +210,12 @@ class SeperateValid:
             dst_lbl_path = os.path.join(dst_valid_lbl_dir, lbl_name)
             
             # 链接图片
-            if self.create_symlinks(src_img_path, dst_img_path, self.logger):
+            if self.create_symlinks(src_img_path, dst_img_path):
                 total_valid_links += 1
             # 链接标签 (如果存在)
             if os.path.exists(src_lbl_path):
-                self.create_symlinks(src_lbl_path, dst_lbl_path, self.logger)
-                
+                self.create_symlinks(src_lbl_path, dst_lbl_path)
+
         # 7. 最后验证 *新创建的* 数据集
         if not self.valid_database(self.seperated_dataset_dir, mode=True):
             self.logger.error('-----------------------------------')

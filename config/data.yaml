@@ -1,0 +1,76 @@
+# -------------------------------------------------------------
+# YOLOv8 数据集配置文件 (data.yaml)
+# -------------------------------------------------------------
+
+path: E://Desktop//coding//kfs_detect//dataset_seperated # 数据集的根目录
+train: images/train # 训练图片目录 (相对于 'path')
+val: images/valid # 验证图片目录 (相对于 'path')
+# test: images/test  # (可选) 测试图片目录
+
+# -------------------------------------------------------------
+# 2. 定义类别
+# -------------------------------------------------------------
+
+names:
+  - bluer1 # 索引 0
+  - redr1 # 索引 1
+  - ablue # 索引 2
+  - bblue
+  - cblue
+  - dblue
+  - eblue
+  - fblue
+  - gblue
+  - hblue
+  - iblue
+  - jblue
+  - kblue
+  - lblue
+  - mblue
+  - nblue
+  - oblue
+  - blueA
+  - blueB
+  - blueC
+  - blueD
+  - blueE
+  - blueF
+  - blueG
+  - blueH
+  - blueI
+  - blueJ
+  - blueK
+  - blueL
+  - blueM
+  - blueN
+  - blueO
+  - ared
+  - bred
+  - cred
+  - dred
+  - ered
+  - fred
+  - gred
+  - hred
+  - ired
+  - jred
+  - kred
+  - lred
+  - mred
+  - nred
+  - ored
+  - redA
+  - redB
+  - redC
+  - redD
+  - redE
+  - redF
+  - redG
+  - redH
+  - redI
+  - redJ
+  - redK
+  - redL
+  - redM
+  - redN
+  - redO # 索引 61
