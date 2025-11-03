@@ -90,6 +90,7 @@ def detect_with_video(video_path):
     cv2.destroyAllWindows()
     
     
+    
 def main():
     path = Path(__file__).parent.resolve()
     video_path = os.path.join(path, 'video', 'test.mp4')
