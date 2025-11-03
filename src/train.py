@@ -21,7 +21,7 @@ def train():
     model_path = os.path.join(path, 'models', 'yolo11s.pt')
     data_path = os.path.join(path, 'config', 'data.yaml')
     model = YOLO(model_path)
-    model.train(data=data_path, epochs=300, imgsz=640, batch=16, name="kfs_detect_model", workers=8, device=0, resume=True)
+    model.train(data=data_path, epochs=300, imgsz=640, batch=16, name="kfs_detect_model", workers=8, device=0, resume=False)
 
 def main():
     path = Path(__file__).parent.resolve()
