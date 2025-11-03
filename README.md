@@ -177,10 +177,7 @@ uv run python -m test.test_detect
 ## 日志与结果
 
 2025-11-03：原始数据集未做透视泛化，透视图片识别效果较差，下一版考虑增加透视增强。
-
-示例推理结果：
-
-![result1](./test/output/detected_image.jpg)
+![result1 11.03](./test/output/detected_image_1.jpg)
 
 # 数据集地址(local)
 
