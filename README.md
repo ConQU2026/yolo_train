@@ -180,7 +180,7 @@ uv run python -m test.test_detect
 
 示例推理结果：
 
-![result1](./test/output/detected_image.jpg)
+![result1](./test/output/detected_image_1.jpg)
 
 # 数据集地址(local)
 
