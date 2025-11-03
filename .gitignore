@@ -10,9 +10,10 @@ wheels/
 .venv
 
 
-dataset*/
+*dataset*/
 
-models/
+# models/
 
 runs/
-.python_version
+
+yolo11n.pt

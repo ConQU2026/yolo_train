@@ -103,6 +103,7 @@ class YOLOFormatter:
                     yolo_line = self.generate_yolo_label(label_name, bbox, logger=logger)
                     f_out.write(yolo_line + "\n")
 
+
 def main():
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)

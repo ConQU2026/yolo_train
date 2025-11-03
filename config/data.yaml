@@ -2,7 +2,7 @@
 # YOLOv8 数据集配置文件 (data.yaml)
 # -------------------------------------------------------------
 
-path: E://Desktop//coding//kfs_detect//dataset_seperated # 数据集的根目录
+path: E://Desktop//coding//kfs_detect//transformed_dataset_seperated # 数据集的根目录
 train: images/train # 训练图片目录 (相对于 'path')
 val: images/valid # 验证图片目录 (相对于 'path')
 # test: images/test  # (可选) 测试图片目录

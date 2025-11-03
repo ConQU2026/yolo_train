@@ -193,9 +193,14 @@ class SeperateValid:
             # 链接图片
             if self.create_symlinks(src_img_path, dst_img_path):
                 total_train_links += 1
+                
+            else:
+                raise RuntimeError(f"Failed to create symlink for image: {src_img_path} -> {dst_img_path}")
             # 链接标签 (如果存在)
             if os.path.exists(src_lbl_path):
-                self.create_symlinks(src_lbl_path, dst_lbl_path)
+                result = self.create_symlinks(src_lbl_path, dst_lbl_path)
+                if not result:
+                    raise RuntimeError(f"Failed to create symlink for label: {src_lbl_path} -> {dst_lbl_path}")
 
         # 6. 为 *新验证集* 创建符号链接
         self.logger.info("Creating symlinks for NEW valid set...")
@@ -212,10 +217,14 @@ class SeperateValid:
             # 链接图片
             if self.create_symlinks(src_img_path, dst_img_path):
                 total_valid_links += 1
-            # 链接标签 (如果存在)
+                
+            else:
+                raise RuntimeError(f"Failed to create symlink for image: {src_img_path} -> {dst_img_path}")
             if os.path.exists(src_lbl_path):
-                self.create_symlinks(src_lbl_path, dst_lbl_path)
-
+                result = self.create_symlinks(src_lbl_path, dst_lbl_path)
+                if not result:
+                    raise RuntimeError(f"Failed to create symlink for label: {src_lbl_path} -> {dst_lbl_path}")
+                
         # 7. 最后验证 *新创建的* 数据集
         if not self.valid_database(self.seperated_dataset_dir, mode=True):
             self.logger.error('-----------------------------------')
@@ -235,8 +244,7 @@ def main():
     logger = setup_logging(logging.INFO)
 
     try:
-        # 2. 将日志记录器传递给 SeperateValid
-        seperater = SeperateValid(valid_ratio=0.2, seed=42, dataset_dir="dataset", logger=logger)
+        seperater = SeperateValid(valid_ratio=0.2, seed=42, dataset_dir="transformed_dataset", logger=logger)
         seperater.start_seperate()
     except (RuntimeError, FileNotFoundError) as e:
         logger.error(f"An error occurred: {e}")
